@@ -1,7 +1,32 @@
-# Night Owls Detector
+# Поиск сов на Девман
 
-[TODO. There will be project description]
+Скрипт вычисляет, кто отправил задачу на проверку после полуночи. 
 
-# Project Goals
+# Как работает 
+```bash
+$ python seek_dev_nighters.py
+Сов на davman.org — 14
+  1: id311542249
+  2: paganismrus
+  3: studentbedn
+  4: id306803365
+  5: apelsinovv
+  ....
+```
+# Требования
+Совестимые OC:
+* Linux,
+* Windows
+* MacOS
 
-The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)
+Скрипт требует для своей работы установленного интерпретатора Python версии 3.5 выше
+
+# Как запустить
+Стандатной командой `python` (на некоторых компьютерах `python3`)
+
+```bash
+$ python seek_dev_nighters.py
+```
+> Запуск для всех ОС одинаковый
+# Цели проекта
+Код создан в учебных целях. В рамках учебного курса по веб-разработке - [DEVMAN.org](https://devman.org)
