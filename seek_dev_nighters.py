@@ -2,31 +2,27 @@ import requests
 from pytz import timezone
 from datetime import datetime
 
-SOLUTION_ATTEMPTS_URL = 'http://devman.org/api/challenges/solution_attempts/'
 
+def load_attempts(api_upl):
+    page_number = 1
 
-def get_number_pages():
-    response = requests.get(SOLUTION_ATTEMPTS_URL)
-    pages = response.json()['number_of_pages']
-    return pages
-
-
-def load_attempts(pages):
-    for page in range(1, pages+1):
-        response = requests.get('{}?page={}'.format(SOLUTION_ATTEMPTS_URL, page))
+    while True:
+        response = requests.get(api_upl, params={'page': page_number})
+        if response.status_code == 404:
+            break
         solution_attempts_on_page = response.json()['records']
-
         for attempt in solution_attempts_on_page:
             yield {
                 'username': attempt['username'],
                 'timestamp': attempt['timestamp'],
                 'timezone': attempt['timezone'],
             }
+        page_number += 1
 
 
-def get_midnighters(today_attempts):
+def get_midnighters(all_attempts):
     midnighters_users = []
-    for attempt in today_attempts:
+    for attempt in all_attempts:
         user_time = datetime.fromtimestamp(
             attempt['timestamp'],
             tz=timezone(attempt['timezone'])
@@ -38,9 +34,9 @@ def get_midnighters(today_attempts):
 
 
 if __name__ == '__main__':
+    solution_attempts_url = 'http://devman.org/api/challenges/solution_attempts/'
     try:
-        number_pages = get_number_pages()
-        solution_attempts = load_attempts(number_pages)
+        solution_attempts = load_attempts(solution_attempts_url)
     except requests.ConnectionError:
         exit('Не удалось подключиться к серверу'
              'Проверьте интернет соеденние')
