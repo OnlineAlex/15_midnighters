@@ -3,14 +3,18 @@ from pytz import timezone
 from datetime import datetime
 
 
-def load_attempts(api_upl):
+def load_attempts(attempts_upl):
     page_number = 1
+    response = requests.get(attempts_upl)
+    number_pages = response.json()['number_of_pages']
 
-    while True:
-        response = requests.get(api_upl, params={'page': page_number})
-        if response.status_code == 404:
-            break
+    while page_number <= number_pages:
+        response = requests.get(
+            attempts_upl,
+            params={'page': page_number}
+        )
         solution_attempts_on_page = response.json()['records']
+
         for attempt in solution_attempts_on_page:
             yield {
                 'username': attempt['username'],
@@ -37,11 +41,11 @@ if __name__ == '__main__':
     solution_attempts_url = 'http://devman.org/api/challenges/solution_attempts/'
     try:
         solution_attempts = load_attempts(solution_attempts_url)
+        devman_midnighters = get_midnighters(solution_attempts)
     except requests.ConnectionError:
-        exit('Не удалось подключиться к серверу'
+        exit('Не удалось подключиться к серверу\n'
              'Проверьте интернет соеденние')
 
-    devman_midnighters = get_midnighters(solution_attempts)
     print('Сов на davman.org — {}'.format(len(devman_midnighters)))
     for index, devman_midnighter in enumerate(devman_midnighters, start=1):
         print('{:>3}: {}'.format(index, devman_midnighter))
