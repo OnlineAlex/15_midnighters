@@ -3,24 +3,24 @@ from pytz import timezone
 from datetime import datetime
 
 
-def load_attempts(attempts_upl):
+def load_attempts(api_url):
     page_number = 1
-    response = requests.get(attempts_upl)
-    number_pages = response.json()['number_of_pages']
 
-    while page_number <= number_pages:
+    while True:
         response = requests.get(
-            attempts_upl,
+            api_url,
             params={'page': page_number}
         )
-        solution_attempts_on_page = response.json()['records']
+        data_on_page = response.json()
 
-        for attempt in solution_attempts_on_page:
+        for attempt in data_on_page['records']:
             yield {
                 'username': attempt['username'],
                 'timestamp': attempt['timestamp'],
                 'timezone': attempt['timezone'],
             }
+        if page_number == data_on_page['number_of_pages']:
+            break
         page_number += 1
 
 
